@@ -32,7 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     final myBloc = MyBlocBloc.get(context);
@@ -58,11 +57,49 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             }),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          myBloc.increment();
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Builder(
+            builder: (context) => FloatingActionButton.extended(
+              onPressed: () async {
+                try {
+                  /// easy to await
+                  /// easy to find the processing code, just command click with IDE
+                  await myBloc.performAProcess(9);
+                } catch (e) {
+                  /// easy to get a handle on problems in the right context
+                  print(e);
+                }
+                /// easy to respond to the user
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text('did the thing')));
+              },
+              label: Text('Call a method'),
+              icon: Icon(Icons.add),
+            ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          FloatingActionButton.extended(
+            onPressed: () {
+              // problemA: it would be most convenient to get a Future that can be wrapped in a
+              // try/catch, easier to throw snackbars up and makes the state model
+              // easier to describe. A failure to do this one process shouldn't necessarily
+              // change the state as it's something that happens in one instant rather than actually a "state" of the running program
+              // it's awkward to put error messages in the state model especially when the errors need to be shown once they happen,
+              // not persistently. When you send everything in an event to the bloc you lose the direct handle on the execution.
+              // you can work around it by passing Completers around but this can become very hard to follow and debug
+              // additionally you can't just command click into the function that
+              // does this work, you've got to go find the Bloc class and search for the event in the mapping function then follow it through
+              myBloc.add(PerformAProcessEvent(7));
+            },
+            label: Text('Send Event'),
+            icon: Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
