@@ -29,12 +29,12 @@ void main() {
     testWidgets('should load with a basic pre-configured state',
         (tester) async {
       mockBlocState(
-          myBloc,
-          Stream<MyBlocState>.fromIterable([
-            // doesn't work unless you pad it with the initial state. this is inconvenient, but workable
-            InitialMyBlocState(),
-            LoadedMyBlocState(0),
-          ]));
+        myBloc,
+        Stream<MyBlocState>.fromIterable([
+          LoadedMyBlocState(0),
+        ]),
+        currentState: LoadedMyBlocState(0),
+      );
 
       await _pumpWidget(tester);
 
@@ -48,7 +48,11 @@ void main() {
       when(myBloc.increment()).thenAnswer((realInvocation) {
         stateSubject.add(LoadedMyBlocState(1));
       });
-      mockBlocState(myBloc, stateSubject.startWith(InitialMyBlocState()));
+      mockBlocState(
+        myBloc,
+        stateSubject,
+        currentState: LoadedMyBlocState(0),
+      );
 
       await _pumpWidget(tester);
       expect(find.text('loaded'), findsOneWidget);
