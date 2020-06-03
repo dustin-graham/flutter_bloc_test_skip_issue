@@ -44,10 +44,9 @@ class MyBlocBloc extends Bloc<MyBlocEvent, MyBlocState> {
   /// The nice thing about this is that the caller gets a Future which is really nice to work with when dealing with user interactions.
   /// It's much easier to communicate to the user what is happening like throwing up a snackbar
   Future<void> performAProcess(int importantArg) async {
+    // TODO: produce transition
     await Future.delayed(Duration(seconds: 1));
-    /// errors here are sent back to the caller, not forwarded onto the stream. This is beneficial in most actual cases we find. It's not necessary to mutate state in cases of an error
-    /// and if you did want to mutate state, you still could from this point
-    /// throw 'some problem'
+    // TODO: produce transition
     add(LoadedStateUpdated(LoadedMyBlocState(importantArg)));
     /// again, I'd rather not have to use an event at all here. If I had a handle on the underlying BehaviorSubject I would be able to just add the new loaded state directly from here
   }
